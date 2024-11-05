@@ -1,0 +1,43 @@
+services:
+  dozzle:
+    restart: unless-stopped
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 20080:8080
+
+  scrutiny:
+    container_name: scrutiny
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    restart: unless-stopped
+    cap_add:
+      - SYS_RAWIO
+    ports:
+      - "8880:8080" # webapp
+      - "8086:8086" # influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /home/ad/docker/scrutiny:/opt/scrutiny/config
+      - /home/ad/docker/scrutiny/influxdb:/opt/scrutiny/influxdb
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"
+      - "/dev/sdd"
+      - "/dev/sdf"
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      - WATCHTOWER_NOTIFICATION_URL=pushover://<apiToken>@<userKey>
+      - WATCHTOWER_NOTIFICATIONS_HOSTNAME=Athena
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=false
+      - WATCHTOWER_SCHEDULE=0 0 8 * * *
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"

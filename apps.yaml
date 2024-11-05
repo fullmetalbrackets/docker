@@ -1,0 +1,83 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/ad:/srv
+      # create below two empty files before running
+      - /home/ad/docker/filebrowser/filebrowser.db:/database/filebrowser.db
+      - /home/ad/docker/filebrowser/settings.json:/config/settings.json
+    ports:
+        - 18888:80
+
+  nginx-proxy:
+    image: docker.io/jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - /home/ad/docker/nginxproxy:/data
+      - /home/ad/docker/nginxproxy/letsencrypt:/etc/letsencrypt
+
+  opengist:
+    image: ghcr.io/thomiceli/opengist:1
+    container_name: opengist
+    restart: unless-stopped
+    environment:
+      UID: 1000
+      GID: 1000
+    ports:
+      - 6157:6157
+      - 2222:2222
+    volumes:
+      - /home/ad/docker/opengist:/opengist
+
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - DB_CONNECTION=sqlite
+      - APP_KEY=<get from https://speedtest-tracker.dev>
+      - DISPLAY_TIMEZONE=America/New_York
+      - SPEEDTEST_SCHEDULE=0 */4 * * *
+      - PRUNE_RESULTS_OLDER_THAN=30
+    volumes:
+      - /home/ad/docker/speedtest:/config
+    ports:
+      - 8800:80
+    restart: unless-stopped
+
+  syncthing:
+    image: syncthing/syncthing
+    container_name: syncthing
+    # hostname: syncthing
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/ad/docker/syncthing:/var/syncthing
+      - /mnt/other:/other
+    network_mode: host
+    restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    volumes:
+      - /home/ad/docker/uptime:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3001:3001
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    restart: unless-stopped

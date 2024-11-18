@@ -12,6 +12,7 @@ services:
       - /home/ad/docker/filebrowser/settings.json:/config/settings.json
     ports:
         - 18888:80
+    restart: unless-stopped
 
   nginx-proxy:
     image: docker.io/jc21/nginx-proxy-manager:latest

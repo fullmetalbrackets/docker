@@ -68,6 +68,7 @@ services:
       - TZ=America/New_York
       - UPDATER_PERIOD=72h
       - SERVER_COUNTRIES="United States"
+    restart: unless-stopped
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest

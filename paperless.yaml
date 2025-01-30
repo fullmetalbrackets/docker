@@ -4,14 +4,14 @@ services:
     image: docker.io/library/redis:7
     restart: unless-stopped
     volumes:
-      - /home/ad/docker/paperless/redis:/data
+      - /opt/docker/paperless/redis:/data
 
   db:
     container_name: paperless-db
     image: docker.io/library/postgres:15
     restart: unless-stopped
     volumes:
-      - /home/ad/docker/paperless/postgres:/var/lib/postgresql/data
+      - /opt/docker/paperless/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER:
@@ -27,10 +27,10 @@ services:
     ports:
       - 8008:8000
     volumes:
-      - /home/ad/docker/paperless/data:/usr/src/paperless/data
-      - /home/ad/docker/paperless/media:/usr/src/paperless/media
-      - /home/ad/documents:/usr/src/paperless/export
-      - /mnt/other/documents/paperless:/usr/src/paperless/consume
+      - /opt/docker/paperless/data:/usr/src/paperless/data
+      - /opt/docker/paperless/media:/usr/src/paperless/media
+      - /mnt/storage/documents:/usr/src/paperless/consume
+      - /mnt/storage/paperless:/usr/src/paperless/export
     environment:
       USERMAP_UID: 1000
       USERMAP_GID: 1000

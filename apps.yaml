@@ -8,8 +8,8 @@ services:
     volumes:
       - /home/ad:/srv
       # create below two empty files before running
-      - /home/ad/docker/filebrowser/filebrowser.db:/database/filebrowser.db
-      - /home/ad/docker/filebrowser/settings.json:/config/settings.json
+      - /opt/docker/filebrowser/filebrowser.db:/database/filebrowser.db
+      - /opt/docker/filebrowser/settings.json:/config/settings.json
     ports:
         - 18888:80
     restart: unless-stopped
@@ -23,8 +23,8 @@ services:
       - 81:81
       - 443:443
     volumes:
-      - /home/ad/docker/nginxproxy:/data
-      - /home/ad/docker/nginxproxy/letsencrypt:/etc/letsencrypt
+      - /opt/docker/nginxproxy:/data
+      - /opt/docker/nginxproxy/letsencrypt:/etc/letsencrypt
 
   opengist:
     image: ghcr.io/thomiceli/opengist:1
@@ -37,7 +37,7 @@ services:
       - 6157:6157
       - 2222:2222
     volumes:
-      - /home/ad/docker/opengist:/opengist
+      - /opt/docker/opengist:/opengist
 
   speedtest-tracker:
     image: lscr.io/linuxserver/speedtest-tracker:latest
@@ -52,7 +52,7 @@ services:
       - SPEEDTEST_SCHEDULE=0 */4 * * *
       - PRUNE_RESULTS_OLDER_THAN=30
     volumes:
-      - /home/ad/docker/speedtest:/config
+      - /opt/docker/speedtest:/config
     ports:
       - 8800:80
     restart: unless-stopped
@@ -65,8 +65,8 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - /home/ad/docker/syncthing:/var/syncthing
-      - /mnt/other:/other
+      - /opt/docker/syncthing:/var/syncthing
+      - /mnt/data:/data
     network_mode: host
     restart: unless-stopped
 
@@ -74,7 +74,7 @@ services:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
     volumes:
-      - /home/ad/docker/uptime:/app/data
+      - /opt/docker/uptime:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 3001:3001

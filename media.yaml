@@ -9,10 +9,10 @@ services:
       - PLEX_UID=1000
       - PLEX_GID=1000
     volumes:
-      - /home/ad/docker/plex:/config
-      - /home/ad/media/movies:/movies
-      - /home/ad/media/tvshows:/tvshows
-      - /mnt/other/music:/music
+      - /opt/docker/plex:/config
+      - /mnt/storage/media/movies:/movies
+      - /mnt/storage/media/tvshows:/tvshows
+      - /mnt/storage/media/music:/music
     devices:
       - /dev/dri:/dev/dri
 
@@ -27,7 +27,7 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /home/ad/docker/tautulli:/config
+      - /opt/docker/tautulli:/config
     depends_on:
       - plex
 
@@ -38,9 +38,9 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - /home/ad/other/ebooks/comics:/comics
-      - /home/ad/other/ebooks/books:/books
-      - /home/ad/docker/kavita:/kavita/config
+      - /mnt/storage/ebooks/comics:/comics
+      - /mnt/storage/ebooks/books:/books
+      - /opt/docker/kavita:/kavita/config
     environment:
       - TZ=America/New_York
 
@@ -58,17 +58,20 @@ services:
       - 8388:8388/tcp # Shadowsocks
       - 8388:8388/udp # Shadowsocks
     volumes:
-      - /home/ad/docker/gluetun:/gluetun
+      - /opt/docker/gluetun:/gluetun
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    restart: unless-stopped
     environment:
-      - VPN_SERVICE_PROVIDER=ivpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=
-      - WIREGUARD_PUBLIC_KEY=
-      - WIREGUARD_ADDRESSES=172.24.58.144/32
       - TZ=America/New_York
       - UPDATER_PERIOD=72h
       - SERVER_COUNTRIES="United States"
-    restart: unless-stopped
+      - SERVER_CITIES=Miami,Atlanta
+      - VPN_TYPE=wireguard
+      - VPN_SERVICE_PROVIDER=
+      - WIREGUARD_PRIVATE_KEY=
+      - WIREGUARD_ADDRESSES=
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -80,10 +83,11 @@ services:
       - WEBUI_PORT=8080
       - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
     volumes:
-      - /home/ad/docker/qbittorrent:/config
-      - /home/ad/media/downloads:/downloads
-      - /home/ad/media/movies:/movies
-      - /home/ad/media/tvshows:/tvshows
+      - /opt/docker/qbittorrent:/config
+      - /mnt/storage/downloads:/downloads
+      - /mnt/storage/media/movies:/movies
+      - /mnt/storage/media/tvshows:/tvshows
+      - /mnt/storage/media/music:/music
     network_mode: "service:gluetun"
     restart: unless-stopped
     depends_on:

@@ -2,6 +2,8 @@
 
 A set of YAML files to create stacks of Docker containers using Docker Compose or Portainer.
 
+> ⚠ Be sure to edit the YAML files and change local directories (e.g. `/opt/docker` and `/mnt/storage`, etc.) to the path of your own local data before running!
+
 ## Create stacks via command line
 
 ```
